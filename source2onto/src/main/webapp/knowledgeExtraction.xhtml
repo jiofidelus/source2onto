@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+	<style>
+.ui-panelgrid td, .ui-panelgrid tr {
+	border-style: none !important
+}
+</style>
+</h:head>
+
+<h:body>
+
+	<p:layout fullPage="true">
+
+		<!-- 	The header -->
+
+		<p:layoutUnit position="north" resizable="true" size="60" minSize="40"
+			maxSize="200" style="border:0px; align:left;">
+			<h:form>
+				<p:panelGrid style="border:0px" columns="3">
+
+					<p:commandButton value="Model definition" action="modelDef.xhtml" />
+
+					<p:commandButton value="Knowledge extraction"
+						action="knowledgeExtraction.xhtml" />
+
+				</p:panelGrid>
+			</h:form>
+		</p:layoutUnit>
+
+		<!-- the main panel -->
+
+		<p:layoutUnit position="center" style="border:0px;">
+
+			<h:form id="form">
+
+<!-- 				<p:growl id="msgs" showDetail="true" /> -->
+
+				<p:tabView style="border:0px;" id="tabView">
+
+					<p:tab title="Configurations" id="config">
+					<p:panelGrid columns="2" style="border:0px;">
+						<p:outputLabel for="console" value="Select an existing model: " />
+						<p:outputLabel for="console" value="Select the type of model: " />
+
+						<p:selectOneMenu id="console" value="#{knowledgeExtraction.programminLang}"
+							style="width:125px">
+							<f:selectItem itemLabel="" itemValue="unknown" />
+							<f:selectItem itemLabel="Java" itemValue="JavaLang" />
+							<f:selectItem itemLabel="C" itemValue="cLang" />
+							<f:selectItem itemLabel="C++" itemValue="cPlusPlusLang" />
+							<f:selectItem itemLabel="Python" itemValue="pythonLang" />
+							<f:selectItem itemLabel="Perl" itemValue="PerlLang" />
+							<f:selectItem itemLabel="Haskel" itemValue="haskelLang" />
+						</p:selectOneMenu>
+
+						<p:selectOneMenu  value="#{knowledgeExtraction.modelType}"
+							style="width:125px">
+							<f:selectItem itemLabel="" itemValue="unknown" />
+							<f:selectItem itemLabel="Regex" itemValue="Regex" />
+							<f:selectItem itemLabel="HMM" itemValue="HMM" />
+						</p:selectOneMenu>
+						<br />
+						<br />
+					</p:panelGrid>
+						<p:panelGrid columns="2" style="border:0px;">
+							<p:outputLabel value="Enter the link to the model: "/>
+							<p:inputText size="70" value="#{knowledgeExtraction.modelPath}" />
+							
+							<p:outputLabel value="Enter the link to the data source "/>
+							<p:inputText size="70" value="#{knowledgeExtraction.dataSourcePath}" />
+							
+							<p:outputLabel value="Enter the link to the knowledge extracted "/>
+							<p:inputText size="70" value="#{knowledgeExtraction.knowledgeExtractionPath}" />
+						</p:panelGrid>
+						
+						<p:panelGrid columns="2" style="border:0px;">
+							<p:panel style="border:0px;">
+								<h3>View the model</h3>
+								<p:inputTextarea rows="15" cols="53" id="viewModel"
+								autoResize="false" value="#{knowledgeExtraction.model}" />
+							</p:panel>
+
+							<p:panel style="border:0px">
+								<h3>Model description</h3>
+								<p:inputTextarea rows="15" cols="53" />
+							</p:panel>
+						</p:panelGrid>
+
+						<p:panelGrid style="border:0px" columns="2">
+
+							<p:commandButton value="View the model" update="config"
+							actionListener="#{knowledgeExtraction.loadModel()}"
+								styleClass="ui-priority-primary" />
+
+							<p:commandButton value="Extract knowledge" update="tabView"
+							actionListener="#{knowledgeExtraction.knowledgeExtraction()}" />
+
+							<p:commandButton value="Reset" type="reset" />
+
+<!-- 							<p:commandButton value="Cancel" id="withIcon" -->
+<!-- 								actionListener="#{buttonView.buttonAction}" icon="ui-icon-disk" /> -->
+						</p:panelGrid>
+					</p:tab>
+					<!-- ******************************************************************************************** -->
+					<!-- *									Terms extracted											* -->
+					<!-- ******************************************************************************************** -->
+<!-- 					<p:dataTable var="car" value="#{dtFilterView.cars}" widgetVar="carsTable" -->
+<!--                  emptyMessage="No cars found with given criteria"  -->
+<!--                  filteredValue="#{dtFilterView.filteredCars}"> -->
+ 
+<!--         <f:facet name="header"> -->
+<!--             <p:outputPanel> -->
+<!--                 <h:outputText value="Search all fields:" /> -->
+<!--                 <p:inputText id="globalFilter" onkeyup="PF('carsTable').filter()" style="width:150px" placeholder="Enter keyword"/> -->
+<!--             </p:outputPanel> -->
+<!--         </f:facet> -->
+					
+					<p:tab title="Terms extracted">
+						<h:form>
+							<p:dataTable id="termtbl" var="term" value="#{termView.listTerms}" widgetVar="termsTable"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink}
+						 {PageLinks} {NextPageLink} {LastPageLink}" emptyMessage="No terms found with given criteria"
+						filteredValue="#{termView.filteredTerms}"		paginator="true" rows="10" style="margin-bottom:20px;" 
+						selection="#{termView.selectedTerms}" rowKey="#{term.name}">
+
+								<f:facet name="header">
+									<p:outputPanel>
+										<h:outputLabel value="Search all fields" />
+										<p:inputText id="globalFilter" onkeyup="PF('termsTable').filter()"
+										 style="width:300px" placeholder="Enter keyword"/>
+									</p:outputPanel>
+								</f:facet>
+
+								<p:column selectionMode="multiple" headerText="Validate"
+								style="width:100px;text-align:center"/>
+								
+								<p:column filterBy="#{term.name}" filterMatchMode="contains" headerText="Name">
+									<p:inputText value="#{term.name}" />
+								</p:column>
+
+								<p:column filterBy="#{term.typeOfTerm}" filterMatchMode="contains" headerText="Type of term">
+									<p:inputText value="#{term.typeOfTerm}" />
+								</p:column>
+								
+								
+
+							</p:dataTable>
+							<p:button value="Update the knowledge" />
+							<br />
+							<br />
+<!-- 			<p:commandButton value="Download"  -->
+<!--     icon="ui-icon-arrowthick-1-s"> -->
+<!--         <p:fileDownload value="#{fileDownloadView.file}" /> -->
+<!--     </p:commandButton> -->
+	<p:panelGrid columns="3">
+				<p:commandButton value="Export to Text" actionListener="#{termView.textExport()}"
+				icon="ui-icon-arrowthick-1-s" />
+				<p:commandButton value="Export to OWL" actionListener="#{termView.owlExport()}"
+				icon="ui-icon-arrowthick-1-s" />
+				<p:commandButton value="Export to RDF" actionListener="#{termView.rdfExport()}"
+				icon="ui-icon-arrowthick-1-s" />
+	
+	</p:panelGrid>
+				
+						</h:form>
+					</p:tab>
+					<!-- ******************************************************************************************** -->
+					<!-- *									Class extracted											* -->
+					<!-- ******************************************************************************************** -->
+					<p:tab title="Class extracted">
+					<h3>Find a class using SparQL</h3>
+					<p:inputTextarea rows="2" cols="100" />
+					
+<!-- 					Data table -->
+
+					<p:dataTable id="classModel" var="classVar" value="#{classView.listClass}" 
+					editable="true" editMode="cell" widgetVar="classTable" 
+					emptyMessage="No relation found with given criteria"
+					filteredValue="#{classView.listFilteredClasses}">
+					
+       <f:facet name="header">
+            <p:outputPanel>
+                <h:outputText value="Search all fields:" />
+                <p:inputText id="globalFilter" onkeyup="PF('classTable').filter()" 
+                style="width:150px" placeholder="Enter keyword"/>
+            </p:outputPanel>
+        </f:facet>
+ 
+       <p:ajax event="cellEdit" listener="#{classView.onCellEdit}" />
+ 
+       <p:column headerText="Name" sortBy="#{classVar.name}" filterBy="#{classVar.name}"
+       filterMatchMode="contains">
+              <p:cellEditor>
+                  <f:facet name="output"><h:outputText value="#{classVar.name}" /></f:facet>
+                  <f:facet name="input"><p:inputText id="modelInput" value="#{classVar.name}" style="width:96%"/></f:facet>
+              </p:cellEditor>
+          </p:column>
+ 
+          <p:column headerText="Description">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{classVar.description}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{classVar.description}" style="width:96%" label="Year"/></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+  <p:column headerText="synonyms">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{classVar.synonyms}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{classVar.synonyms}" style="width:96%" label="Year"/></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+        <p:column headerText="Subclasses">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{classVar.subClasses}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{classVar.subClasses}" style="width:96%" label="Year"/></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+        <p:column headerText="Validate" sortBy="#{classVar.validate}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{classVar.validate}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{classVar.validate}" style="width:96%" label="Year"/></f:facet>
+           </p:cellEditor>
+       </p:column>
+
+   </p:dataTable>
+ 
+   <p:contextMenu for="classModel" widgetVar="cMenu">   
+       <p:menuitem value="Edit Cell" icon="ui-icon-search" onclick="PF('classTable').showCellEditor();return false;"/>  
+       <p:menuitem value="Hide Menu" icon="ui-icon-close" onclick="PF('cMenu').hide()"/>  
+   </p:contextMenu> 
+<!-- 					Export buttons -->
+
+	<p:panelGrid columns="3">
+				<p:commandButton value="Export to RDF" actionListener="#{classView.rdfExport()}"
+				icon="ui-icon-arrowthick-1-s" />
+				<p:commandButton value="Export to OWL" actionListener="#{classView.owlExport()}"
+				icon="ui-icon-arrowthick-1-s" />
+				<p:commandButton value="Export to Text" actionListener="#{classView.textExport()}"
+				icon="ui-icon-arrowthick-1-s" />
+	
+	</p:panelGrid>
+				
+					</p:tab>
+					<!-- ******************************************************************************************** -->
+					<!-- *									Relation extracted										* -->
+					<!-- ******************************************************************************************** -->
+					<p:tab title="Relation extracted">
+<!-- 					<h3>Find a term using SparQL</h3> -->
+<!-- 					<p:inputTextarea rows="2" cols="100" /> -->
+					
+<!-- 					Data table -->
+
+<!-- 					<p:dataTable id="relationModel" var="relationVar"  -->
+<!-- 					value="#{relationView.listRelations}"  -->
+<!-- 					editable="true" editMode="cell" widgetVar="relationTable"  -->
+<!-- 					emptyMessage="No relation found with given criteria" -->
+<!-- 					filteredValue="#{relationView.listFilteredRelations}"> -->
+					
+<!--        <f:facet name="header"> -->
+<!--             <p:outputPanel> -->
+<!--                 <h:outputText value="Search all fields:" /> -->
+<!--                 <p:inputText id="globalFilter" onkeyup="PF('relationTable').filter()"  -->
+<!--                 style="width:150px" placeholder="Enter keyword"/> -->
+<!--             </p:outputPanel> -->
+<!--         </f:facet> -->
+ 
+<!--        <p:ajax event="cellEdit" listener="#{relationView.onCellEdit}" /> -->
+ 
+<!--        <p:column headerText="Name" sortBy="#{relationVar.name}" filterBy="#{relationVar.name}" -->
+<!--        filterMatchMode="contains"> -->
+<!--               <p:cellEditor> -->
+<!--                   <f:facet name="output"><h:outputText value="#{relationVar.name}" /></f:facet> -->
+<!--                   <f:facet name="input"><p:inputText id="modelInput" value="#{relationVar.name}" style="width:96%"/></f:facet> -->
+<!--               </p:cellEditor> -->
+<!--           </p:column> -->
+ 
+<!--           <p:column headerText="Description"> -->
+<!--            <p:cellEditor> -->
+<!--                <f:facet name="output"><h:outputText value="#{classVar.description}" /></f:facet> -->
+<!--                <f:facet name="input"><p:inputText value="#{classVar.description}" style="width:96%" label="Year"/></f:facet> -->
+<!--            </p:cellEditor> -->
+<!--        </p:column> -->
+       
+<!--   <p:column headerText="synonyms"> -->
+<!--            <p:cellEditor> -->
+<!--                <f:facet name="output"><h:outputText value="#{classVar.synonyms}" /></f:facet> -->
+<!--                <f:facet name="input"><p:inputText value="#{classVar.synonyms}" style="width:96%" label="Year"/></f:facet> -->
+<!--            </p:cellEditor> -->
+<!--        </p:column> -->
+       
+<!--         <p:column headerText="Subclasses"> -->
+<!--            <p:cellEditor> -->
+<!--                <f:facet name="output"><h:outputText value="#{classVar.subClasses}" /></f:facet> -->
+<!--                <f:facet name="input"><p:inputText value="#{classVar.subClasses}" style="width:96%" label="Year"/></f:facet> -->
+<!--            </p:cellEditor> -->
+<!--        </p:column> -->
+       
+<!--         <p:column headerText="Validate" sortBy="#{classVar.validate}"> -->
+<!--            <p:cellEditor> -->
+<!--                <f:facet name="output"><h:outputText value="#{classVar.validate}" /></f:facet> -->
+<!--                <f:facet name="input"><p:inputText value="#{classVar.validate}" style="width:96%" label="Year"/></f:facet> -->
+<!--            </p:cellEditor> -->
+<!--        </p:column> -->
+
+<!--    </p:dataTable> -->
+ 
+<!--    <p:contextMenu for="relationModel" widgetVar="cMenu">    -->
+<!--        <p:menuitem value="Edit Cell" icon="ui-icon-search" onclick="PF('relationTable').showCellEditor();return false;"/>   -->
+<!--        <p:menuitem value="Hide Menu" icon="ui-icon-close" onclick="PF('cMenu').hide()"/>   -->
+<!--    </p:contextMenu>  -->
+<!-- 					Export buttons -->
+
+<!-- 	<p:panelGrid columns="3"> -->
+<!-- 				<p:commandButton value="Export to RDF" actionListener="#{relationView.rdfExport()}" -->
+<!-- 				icon="ui-icon-arrowthick-1-s" /> -->
+<!-- 				<p:commandButton value="Export to OWL" actionListener="#{relationView.owlExport()}" -->
+<!-- 				icon="ui-icon-arrowthick-1-s" /> -->
+<!-- 				<p:commandButton value="Export to Text" actionListener="#{relationView.textExport()}" -->
+<!-- 				icon="ui-icon-arrowthick-1-s" /> -->
+	
+<!-- 	</p:panelGrid> -->
+					
+					</p:tab>
+					<!-- ******************************************************************************************** -->
+					<!-- *							Attributes extracted											* -->
+					<!-- ******************************************************************************************** -->
+					<p:tab title="Attributes extracted">
+
+
+					</p:tab>
+					<!-- ******************************************************************************************** -->
+					<!-- *								Axioms extracted											* -->
+					<!-- ******************************************************************************************** -->
+					<p:tab title="Axioms extracted">
+						<h:panelGrid columns="2" cellpadding="10">
+							<h:outputText value="get help on the model definition" />
+						</h:panelGrid>
+					</p:tab>
+					<!-- ******************************************************************************************** -->
+					<!-- *									Rules extracted											* -->
+					<!-- ******************************************************************************************** -->
+					<p:tab title="Rules extracted">
+						<h:panelGrid columns="2" cellpadding="10">
+							<h:outputText value="get help on the model definition" />
+						</h:panelGrid>
+					</p:tab>
+
+					<!-- ******************************************************************************************** -->
+					<!-- *									Get help												* -->
+					<!-- ******************************************************************************************** -->
+					<p:tab title="Help">
+						<h:panelGrid columns="2" cellpadding="10">
+							<h:outputText value="get help on the model definition" />
+						</h:panelGrid>
+					</p:tab>
+
+				</p:tabView>
+			</h:form>
+		</p:layoutUnit>
+
+		<!-- the footer panel -->
+
+		<p:layoutUnit position="south" resizable="false" size="60"
+			minSize="40" maxSize="100">
+			<h:outputText value="Powered by Azanzi Jiomekong"
+				style="text-align:center;" />
+
+		</p:layoutUnit>
+	</p:layout>
+
+</h:body>
+
+</html>
+

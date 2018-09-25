@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+</h:head>
+
+<h:body>
+
+	<p:layout fullPage="true">
+
+		<!-- 	The header -->
+
+		<p:layoutUnit position="north" resizable="true" size="60" minSize="40"
+			maxSize="200" style="border:0px; align:left;">
+			<h:form>
+				<p:panelGrid style="border:0px" columns="3">
+
+					<p:commandButton value="Model definition" id="ajax"
+						actionListener="#{buttonView.buttonAction}"
+						styleClass="ui-priority-primary" />
+
+					<p:commandButton value="Model training" id="nonAjax"
+						actionListener="#{buttonView.buttonAction}" ajax="false" />
+
+					<p:commandButton value="Knowledge extraction" id="withIcon"
+						actionListener="#{buttonView.buttonAction}" icon="ui-icon-disk" />
+				</p:panelGrid>
+			</h:form>
+		</p:layoutUnit>
+
+		<!-- the main panel -->
+		<p:layoutUnit position="center" style="border:0px;">
+
+			<h:form id="form">
+
+				<p:growl id="msgs" showDetail="true" />
+
+				<p:tabView style="border:0px;">
+
+					<p:tab title="Regex definition">
+						<p:outputLabel for="console" value="Select an existing model: " />
+						<br />
+						<br />
+						<p:selectOneMenu id="console" value="#{selectOneMenuView.console}"
+							style="width:125px">
+							<f:selectItem itemLabel="" itemValue="unknown" />
+							<f:selectItem itemLabel="Java" itemValue="JavaLang" />
+							<f:selectItem itemLabel="C" itemValue="cLang" />
+							<f:selectItem itemLabel="C++" itemValue="cPlusPlusLang" />
+							<f:selectItem itemLabel="Python" itemValue="pythonLang" />
+							<f:selectItem itemLabel="Perl" itemValue="PerlLang" />
+							<f:selectItem itemLabel="Haskel" itemValue="haskelLang" />
+						</p:selectOneMenu>
+						<br />
+						<br />
+						<p:panelGrid columns="2" style="border:0px;">
+							<p:panel style="border:0px;">
+								<h3>View the model details</h3>
+								<p:inputTextarea rows="15" cols="53" />
+							</p:panel>
+
+							<p:panel style="border:0px">
+								<h3>Define the model</h3>
+								<p:inputTextarea rows="15" cols="53" />
+							</p:panel>
+						</p:panelGrid>
+						<!-- 						<p:growl id="growl" life="2000" /> -->
+						<p:panelGrid style="border:0px" columns="3">
+
+							<p:commandButton value="Validate" id="ajax"
+								actionListener="#{buttonView.buttonAction}"
+								styleClass="ui-priority-primary" />
+
+							<p:commandButton value="Reset" id="nonAjax"
+								actionListener="#{buttonView.buttonAction}" ajax="false" />
+
+							<p:commandButton value="Cancel" id="withIcon"
+								actionListener="#{buttonView.buttonAction}" icon="ui-icon-disk" />
+						</p:panelGrid>
+					</p:tab>
+
+					<p:tab title="HMM definition">
+						<h:panelGrid columns="2" cellpadding="10">
+							<h:outputText value="Define the HMM parameters" />
+						</h:panelGrid>
+					</p:tab>
+
+					<p:tab title="Help">
+						<h:panelGrid columns="2" cellpadding="10">
+							<h:outputText value="get help on the model definition" />
+						</h:panelGrid>
+					</p:tab>
+
+				</p:tabView>
+			</h:form>
+		</p:layoutUnit>
+
+		<!-- the footer panel -->
+
+		<p:layoutUnit position="south" resizable="false" size="60"
+			minSize="40" maxSize="100">
+			<h:outputText value="Powered by Azanzi Jiomekong"
+				style="text-align:center;" />
+
+		</p:layoutUnit>
+	</p:layout>
+
+</h:body>
+
+</html>
